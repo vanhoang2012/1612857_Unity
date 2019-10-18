@@ -6,43 +6,34 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
-    private Vector3 originalPos;
-    private Transform playerTransform;
-    private float startPoint;
-    private float tempX ;
-    void Start()
+    private Transform target;
+
+    public float SmoothTime = .5f;
+
+    Vector3 velocity = Vector3.zero;
+
+    private void Start()
     {
-        originalPos = GameObject.FindGameObjectWithTag("Player").transform.position;
-        startPoint = originalPos.x;
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+    // Max X
+    public float maxX = 19.5f;
+    // Min X
+    public float minX = 0.8137637f;
+
+
+    private void FixedUpdate()
+    {
+        Vector3 targetPos = target.position;
+
+        // Vertical
+        targetPos.y = Mathf.Clamp(target.position.y, 0, 0);
+        // Horizontal
+        targetPos.x = Mathf.Clamp(target.position.x, minX, maxX);
+
+        targetPos.z = transform.position.z;
+
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, SmoothTime);
     }
 
-    private void LateUpdate()
-    {
-        Vector3 newPos = playerTransform.transform.position;
-        if (Cameramoving()) {
-            movingFunc(newPos);
-        }
-    }
-
-    private void movingFunc(Vector3 newPos)
-    {
-        Vector3 cameraPos;
-        float newDis = newPos.x - originalPos.x;
-        cameraPos.x = transform.position.x + newDis;
-        cameraPos.y = transform.position.y;
-        cameraPos.z = transform.position.z;
-        transform.position = cameraPos;
-        originalPos = GameObject.FindGameObjectWithTag("Player").transform.position;
-    }
-
-    private bool Cameramoving()
-    {
-        if (GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>().flipX) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-        
 }

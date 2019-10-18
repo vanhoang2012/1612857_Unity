@@ -25,29 +25,31 @@ public class MarioMovement : MonoBehaviour
 
             GetComponent<SpriteRenderer>().flipX = false;
             GetComponent<Animator>().SetTrigger("Run");
-            numberOfJump = 0;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             GetComponent<Rigidbody2D>().AddForce(new Vector2(speed, 0));
             GetComponent<SpriteRenderer>().flipX = true;
             GetComponent<Animator>().SetTrigger("Run");
-            numberOfJump = 0;
         }
         // Jump
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (!jumping && numberOfJump < 2)
+            if (numberOfJump < 2)
             {
+                Debug.Log(numberOfJump);
                 GetComponent<Rigidbody2D>().AddForce(new Vector2(0, jump));
                 numberOfJump++;
-                jumping = true;
+                //jumping = true; 
             }
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        jumping &= !collision.gameObject.name.Contains("Ground");
+        if (collision.gameObject.name.Contains("Ground"))
+        {
+            numberOfJump = 0;
+        }
     }
 }
